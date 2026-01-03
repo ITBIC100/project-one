@@ -2,49 +2,89 @@
 <html>
 <head>
   <title>Inventory CRUD</title>
+  <style>
+    table {border-collapse: collapse;}
+    td, th {border:1px solid #333; padding:5px;}
+  </style>
 </head>
 <body>
-<h2>Tambah Data</h2>
-<input id="nama" placeholder="Nama Barang">
+
+<h2>FORM INVENTORY</h2>
+<input type="hidden" id="id">
+<input id="nama" placeholder="Nama">
 <input id="stok" placeholder="Stok">
 <input id="lokasi" placeholder="Lokasi">
-<button onclick="tambah()">Simpan</button>
+<button onclick="simpan()">Simpan</button>
+<button onclick="reset()">Reset</button>
 
-<h2>Data Inventory</h2>
-<table border="1" id="table"></table>
+<h2>DATA</h2>
+<table id="table"></table>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbwGmitPMEERvHxS0WSKPy37QuxdGLy-p-vEJoN4QPKXI8b-8c5g2Y8SH9X97adl8tny/exec";
+const API = "PASTE_API_URL_DISINI";
 
-function loadData() {
-  fetch(API_URL)
-    .then(res => res.json())
+function load() {
+  fetch(API + "?action=get")
+    .then(r => r.json())
     .then(data => {
-      let html = "<tr><th>ID</th><th>Nama</th><th>Stok</th><th>Lokasi</th></tr>";
-      data.slice(1).forEach(row => {
-        html += `<tr>
-          <td>${row[0]}</td>
-          <td>${row[1]}</td>
-          <td>${row[2]}</td>
-          <td>${row[3]}</td>
+      let html = "<tr><th>Nama</th><th>Stok</th><th>Lokasi</th><th>Aksi</th></tr>";
+      data.slice(1).forEach(r => {
+        html += `
+        <tr>
+          <td>${r[1]}</td>
+          <td>${r[2]}</td>
+          <td>${r[3]}</td>
+          <td>
+            <button onclick="edit('${r[0]}','${r[1]}','${r[2]}','${r[3]}')">Edit</button>
+            <button onclick="hapus('${r[0]}')">Hapus</button>
+          </td>
         </tr>`;
       });
       document.getElementById("table").innerHTML = html;
     });
 }
 
-function tambah() {
-  fetch(API_URL, {
+function simpan() {
+  const id = document.getElementById("id").value;
+  const data = {
+    action: id ? "update" : "create",
+    id: id,
+    nama: nama.value,
+    stok: stok.value,
+    lokasi: lokasi.value
+  };
+
+  fetch(API, {
     method: "POST",
-    body: JSON.stringify({
-      nama: document.getElementById("nama").value,
-      stok: document.getElementById("stok").value,
-      lokasi: document.getElementById("lokasi").value
-    })
-  }).then(() => loadData());
+    body: JSON.stringify(data)
+  }).then(() => {
+    reset();
+    load();
+  });
 }
 
-loadData();
+function edit(id,nama,stok,lokasi) {
+  document.getElementById("id").value = id;
+  document.getElementById("nama").value = nama;
+  document.getElementById("stok").value = stok;
+  document.getElementById("lokasi").value = lokasi;
+}
+
+function hapus(id) {
+  if(confirm("Hapus data?")) {
+    fetch(API + "?action=delete&id=" + id)
+      .then(() => load());
+  }
+}
+
+function reset() {
+  id.value = "";
+  nama.value = "";
+  stok.value = "";
+  lokasi.value = "";
+}
+
+load();
 </script>
 </body>
 </html>
