@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzy-s2dKgwgCPdAjjU1SjD664GQOS_WL02ZTb0NmP-Nq2X9mWZgnnne15s3kVcAlZlO/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxPEBX6-EXrfgpVMRQF_GonBptI3P2fMhy7vl_sLDtyCNWdqCu9x_vYYOGhxTtWaa45/exec";
 
 function loadData() {
     fetch(API_URL)
