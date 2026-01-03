@@ -1,33 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Web Inventory</title>
-    <link rel="stylesheet" href="css/style.css">
+  <title>Inventory CRUD</title>
 </head>
 <body>
+<h2>Tambah Data</h2>
+<input id="nama" placeholder="Nama Barang">
+<input id="stok" placeholder="Stok">
+<input id="lokasi" placeholder="Lokasi">
+<button onclick="tambah()">Simpan</button>
 
-<h2>📦 Inventory Barang</h2>
+<h2>Data Inventory</h2>
+<table border="1" id="table"></table>
 
-<form id="form">
-    <input type="text" id="kode" placeholder="Kode" required>
-    <input type="text" id="nama" placeholder="Nama" required>
-    <input type="number" id="stok" placeholder="Stok" required>
-    <input type="number" id="harga" placeholder="Harga" required>
-    <button type="submit">Tambah</button>
-</form>
+<script>
+const API_URL = "PASTE_API_URL_DISINI";
 
-<table>
-    <thead>
-        <tr>
-            <th>Kode</th>
-            <th>Nama</th>
-            <th>Stok</th>
-            <th>Harga</th>
-        </tr>
-    </thead>
-    <tbody id="data"></tbody>
-</table>
+function loadData() {
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+      let html = "<tr><th>ID</th><th>Nama</th><th>Stok</th><th>Lokasi</th></tr>";
+      data.slice(1).forEach(row => {
+        html += `<tr>
+          <td>${row[0]}</td>
+          <td>${row[1]}</td>
+          <td>${row[2]}</td>
+          <td>${row[3]}</td>
+        </tr>`;
+      });
+      document.getElementById("table").innerHTML = html;
+    });
+}
 
-<script src="js/app.js"></script>
+function tambah() {
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      nama: document.getElementById("nama").value,
+      stok: document.getElementById("stok").value,
+      lokasi: document.getElementById("lokasi").value
+    })
+  }).then(() => loadData());
+}
+
+loadData();
+</script>
 </body>
 </html>
